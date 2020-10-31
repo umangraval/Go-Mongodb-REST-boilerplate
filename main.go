@@ -124,7 +124,7 @@ func updatePersonEndpoint(response http.ResponseWriter, request *http.Request) {
 
 func main() {
 	fmt.Println("Server running on 8080")
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	clientOptions := options.Client().ApplyURI("mongodb://mongo:27017")
 	client, _ = mongo.Connect(context.TODO(), clientOptions)
 	router := mux.NewRouter()
 	router.HandleFunc("/person", createPersonEndpoint).Methods("POST")
