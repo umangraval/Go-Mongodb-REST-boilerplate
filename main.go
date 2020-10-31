@@ -28,6 +28,7 @@ func hello(w http.ResponseWriter, req *http.Request) {
 }
 
 func createPersonEndpoint(response http.ResponseWriter, request *http.Request) {
+	fmt.Println("POST: /person")
 	response.Header().Add("context-type", "application/json")
 	var person Person
 	json.NewDecoder(request.Body).Decode(&person)
@@ -39,6 +40,7 @@ func createPersonEndpoint(response http.ResponseWriter, request *http.Request) {
 }
 
 func getPeopleEndpoint(response http.ResponseWriter, request *http.Request) {
+	fmt.Println("GET: /people")
 	response.Header().Add("content-type", "application/json")
 	var people []*Person
 	collection := client.Database("golang").Collection("people")
@@ -70,9 +72,10 @@ func getPersonEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Add("context-type", "application/json")
 	params := mux.Vars(request)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
+	fmt.Println("GET: /person/" + params["id"])
 	var person Person
 	collection := client.Database("golang").Collection("people")
-	err := collection.FindOne(context.TODO(), bson.D{{"_id", id}}).Decode(&person)
+	err := collection.FindOne(context.TODO(), bson.D{primitive.E{Key: "_id", Value: id}}).Decode(&person)
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write([]byte(`{ "message": "` + err.Error() + `"}`))
@@ -80,6 +83,43 @@ func getPersonEndpoint(response http.ResponseWriter, request *http.Request) {
 	}
 	json.NewEncoder(response).Encode(person)
 
+}
+
+func deletePersonEndpoint(response http.ResponseWriter, request *http.Request) {
+	response.Header().Add("context-type", "application/json")
+	params := mux.Vars(request)
+	id, _ := primitive.ObjectIDFromHex(params["id"])
+	fmt.Println("DELETE: /person/" + params["id"])
+	collection := client.Database("golang").Collection("people")
+	_, err := collection.DeleteOne(context.TODO(), bson.D{primitive.E{Key: "_id", Value: id}})
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+		return
+	}
+	response.Write([]byte(`{ "message": "Deleted" }`))
+	json.NewEncoder(response)
+}
+
+func updatePersonEndpoint(response http.ResponseWriter, request *http.Request) {
+	response.Header().Add("context-type", "application/json")
+	params := mux.Vars(request)
+	id, _ := primitive.ObjectIDFromHex(params["id"])
+	fmt.Println("PUT: /person/" + params["id"])
+	type fname struct {
+		Firstname string `json:"firstname"`
+	}
+	var fir fname
+	json.NewDecoder(request.Body).Decode(&fir)
+	fmt.Println(fir.Firstname)
+	collection := client.Database("golang").Collection("people")
+	res, err := collection.UpdateOne(context.TODO(), bson.D{primitive.E{Key: "_id", Value: id}}, bson.D{{"$set", bson.D{{"firstname", fir.Firstname}}}})
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+		return
+	}
+	json.NewEncoder(response).Encode(res)
 }
 
 func main() {
@@ -90,5 +130,7 @@ func main() {
 	router.HandleFunc("/person", createPersonEndpoint).Methods("POST")
 	router.HandleFunc("/people", getPeopleEndpoint).Methods("GET")
 	router.HandleFunc("/person/{id}", getPersonEndpoint).Methods("GET")
+	router.HandleFunc("/person/{id}", deletePersonEndpoint).Methods("DELETE")
+	router.HandleFunc("/person/{id}", updatePersonEndpoint).Methods("PUT")
 	http.ListenAndServe(":8080", router)
 }
