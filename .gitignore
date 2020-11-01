@@ -6,6 +6,11 @@
 *.dylib
 main
 
+# exclude everything
+uploaded/*
+
+# exception to the rule
+!uploaded/.gitkeep 
 # Test binary, built with `go test -c`
 *.test
 
