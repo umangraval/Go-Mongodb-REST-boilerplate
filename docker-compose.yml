@@ -6,7 +6,7 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - .:/app/server
+      - .:/app
     depends_on:
       - 'mongo'
 #   web:
