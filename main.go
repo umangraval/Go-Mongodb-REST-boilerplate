@@ -4,10 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -122,15 +125,49 @@ func updatePersonEndpoint(response http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(response).Encode(res)
 }
 
+func uploadFileEndpoint(response http.ResponseWriter, request *http.Request) {
+	fmt.Println("POST: /upload")
+
+	file, handler, err := request.FormFile("file")
+	// fileName := request.FormValue("file_name")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	f, err := os.OpenFile("uploaded/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	_, _ = io.Copy(f, file)
+
+	response.Write([]byte(`{ "message": "Uploaded Successfully" }`))
+	json.NewEncoder(response)
+}
+
 func main() {
 	fmt.Println("Server running on localhost:8080")
 	clientOptions := options.Client().ApplyURI("mongodb://mongo:27017")
 	client, _ = mongo.Connect(context.TODO(), clientOptions)
+
 	router := mux.NewRouter()
+	// headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	// originsOk := handlers.AllowedOrigins([]string{"https://prog.in"})
+	// methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
 	router.HandleFunc("/person", createPersonEndpoint).Methods("POST")
 	router.HandleFunc("/people", getPeopleEndpoint).Methods("GET")
 	router.HandleFunc("/person/{id}", getPersonEndpoint).Methods("GET")
 	router.HandleFunc("/person/{id}", deletePersonEndpoint).Methods("DELETE")
 	router.HandleFunc("/person/{id}", updatePersonEndpoint).Methods("PUT")
-	http.ListenAndServe(":8080", router)
+	router.HandleFunc("/upload", uploadFileEndpoint).Methods("POST")
+
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowCredentials: true,
+	})
+
+	handler := c.Handler(router)
+	http.ListenAndServe(":8080", handler)
 }
