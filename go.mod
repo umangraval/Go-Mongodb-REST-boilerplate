@@ -7,6 +7,7 @@ require (
 	github.com/fatih/color v1.10.0
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/gorilla/mux v1.8.0
+	github.com/joho/godotenv v1.3.0
 	github.com/klauspost/compress v1.11.2 // indirect
 	github.com/rs/cors v1.7.0
 	go.mongodb.org/mongo-driver v1.4.2
