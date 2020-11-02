@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -20,7 +19,6 @@ var client = db.Dbconnect()
 
 // CreatePersonEndpoint -> create person
 func CreatePersonEndpoint(response http.ResponseWriter, request *http.Request) {
-	fmt.Println("POST: /person")
 	response.Header().Add("context-type", "application/json")
 	var person models.Person
 	json.NewDecoder(request.Body).Decode(&person)
@@ -33,7 +31,6 @@ func CreatePersonEndpoint(response http.ResponseWriter, request *http.Request) {
 
 // GetPeopleEndpoint -> get people
 func GetPeopleEndpoint(response http.ResponseWriter, request *http.Request) {
-	fmt.Println("GET: /people")
 	response.Header().Add("content-type", "application/json")
 	var people []*models.Person
 
@@ -66,7 +63,6 @@ func GetPersonEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Add("context-type", "application/json")
 	params := mux.Vars(request)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
-	fmt.Println("GET: /person/" + params["id"])
 	var person models.Person
 
 	collection := client.Database("golang").Collection("people")
@@ -85,7 +81,6 @@ func DeletePersonEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Add("context-type", "application/json")
 	params := mux.Vars(request)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
-	fmt.Println("DELETE: /person/" + params["id"])
 
 	collection := client.Database("golang").Collection("people")
 	_, err := collection.DeleteOne(context.TODO(), bson.D{primitive.E{Key: "_id", Value: id}})
@@ -103,7 +98,6 @@ func UpdatePersonEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Add("context-type", "application/json")
 	params := mux.Vars(request)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
-	fmt.Println("PUT: /person/" + params["id"])
 	type fname struct {
 		Firstname string `json:"firstname"`
 	}
@@ -121,8 +115,6 @@ func UpdatePersonEndpoint(response http.ResponseWriter, request *http.Request) {
 
 // UploadFileEndpoint -> upload file
 func UploadFileEndpoint(response http.ResponseWriter, request *http.Request) {
-	fmt.Println("POST: /upload")
-
 	file, handler, err := request.FormFile("file")
 	// fileName := request.FormValue("file_name")
 	if err != nil {
