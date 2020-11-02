@@ -1,23 +1,22 @@
 version: '3.3'
 services:
   api:
-    container_name: 'go-api'
     build: .
     ports:
-      - '8080:8080'
+      - '8080'
     volumes:
       - .:/app
     depends_on:
       - 'mongo'
-#   web:
-#     container_name: 'web'
-#     image: 'nginx:latest'
-#     ports:
-#       - '8081:80'
-#     volumes:
-#       - './web:/usr/share/nginx/html'
-#     depends_on:
-#       - 'api'
+  web:
+    container_name: 'web'
+    image: 'nginx:latest'
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx/dev.conf.d:/etc/nginx/conf.d
+    depends_on:
+      - 'api'
   mongo:
     image: 'mongo:latest'
     container_name: 'mongo'
