@@ -87,3 +87,17 @@ func ServerErrResponse(error string, writer http.ResponseWriter) {
 	writer.WriteHeader(http.StatusInternalServerError)
 	json.NewEncoder(writer).Encode(temp)
 }
+
+// ValidationResponse -> user input validation
+func ValidationResponse(fields map[string][]string, writer http.ResponseWriter) {
+	//Create a new map and fill it
+	response := make(map[string]interface{})
+	response["errors"] = fields
+	response["status"] = 422
+	response["msg"] = "validation error"
+
+	//Send header, status code and output to writer
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusUnprocessableEntity)
+	json.NewEncoder(writer).Encode(response)
+}

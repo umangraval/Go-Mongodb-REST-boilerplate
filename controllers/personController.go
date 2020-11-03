@@ -13,6 +13,7 @@ import (
 	"github.com/umangraval/Go-Mongodb-REST-boilerplate/db"
 	middlewares "github.com/umangraval/Go-Mongodb-REST-boilerplate/handlers"
 	"github.com/umangraval/Go-Mongodb-REST-boilerplate/models"
+	"github.com/umangraval/Go-Mongodb-REST-boilerplate/validators"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -25,6 +26,10 @@ func CreatePersonEndpoint(response http.ResponseWriter, request *http.Request) {
 	err := json.NewDecoder(request.Body).Decode(&person)
 	if err != nil {
 		middlewares.ServerErrResponse(err.Error(), response)
+		return
+	}
+	if ok, errors := validators.ValidateInputs(person); !ok {
+		middlewares.ValidationResponse(errors, response)
 		return
 	}
 	collection := client.Database("golang").Collection("people")
