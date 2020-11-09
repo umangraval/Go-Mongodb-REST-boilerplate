@@ -8,7 +8,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-var mySigningKey = []byte("captainjacksparrowsayshi")
+var mySigningKey = []byte(DotEnvVariable("JWT_SECRET"))
 
 // IsAuthorized -> verify jwt header
 func IsAuthorized(next http.Handler) http.HandlerFunc {

@@ -6,9 +6,11 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/umangraval/Go-Mongodb-REST-boilerplate/routes"
 )
 
-var rou = Routes()
+var rou = routes.Routes()
 
 func TestGetPeopleEndpoint(t *testing.T) {
 	req, err := http.NewRequest("GET", "/people", nil)
