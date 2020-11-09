@@ -22,7 +22,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 	port := os.Getenv("PORT")
-	color.Cyan("☸ Server running on localhost:" + port)
+	color.Cyan("🌏 Server running on localhost:" + port)
 
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 	router := Routes()
