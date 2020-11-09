@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"log"
+	"os"
 
 	"github.com/fatih/color"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -13,7 +14,7 @@ var client *mongo.Client
 
 // Dbconnect -> connects mongo
 func Dbconnect() *mongo.Client {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27100")
+	clientOptions := options.Client().ApplyURI(os.Getenv("PORT"))
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
 		log.Fatal("⛒ Connection Failed to Database")

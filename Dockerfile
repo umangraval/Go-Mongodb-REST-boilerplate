@@ -9,6 +9,4 @@ COPY go.sum /app
 RUN go mod download
 RUN go get github.com/githubnemo/CompileDaemon
 COPY . /app
-# RUN go build -o main
-# CMD ["./main"]
 ENTRYPOINT CompileDaemon --build="go build -o main" --command=./main
