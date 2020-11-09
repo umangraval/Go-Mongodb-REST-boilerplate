@@ -7,6 +7,20 @@ import (
 	"github.com/umangraval/Go-Mongodb-REST-boilerplate/models"
 )
 
+// AuthorizationResponse -> response authorize
+func AuthorizationResponse(msg string, writer http.ResponseWriter) {
+	type errdata struct {
+		Statuscode int    `json:"status"`
+		Message    string `json:"msg"`
+	}
+	temp := &errdata{Statuscode: 401, Message: msg}
+
+	//Send header, status code and output to writer
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusUnauthorized)
+	json.NewEncoder(writer).Encode(temp)
+}
+
 // SuccessArrRespond -> response formatter
 func SuccessArrRespond(fields []*models.Person, writer http.ResponseWriter) {
 	// var fields["status"] := "success"
