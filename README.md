@@ -54,15 +54,20 @@ Running the above commands results in
 ```
 $ go build 
 ```
+#### 2. Run Tests
 
-#### 2. Run with docker
+```
+$ cd tests
+$ go test
+```
+#### 3. Run with docker
 
 ```
 $ docker build -t api-server .
 $ docker run -t -i -p 8080:8080 api-server
 ```
 
-#### 3. Run with docker-compose
+#### 4. Run with docker-compose
 
 ```
 $ docker-compose up
@@ -96,6 +101,7 @@ The application uses [winston](https://github.com/winstonjs/winston) as the defa
 +-- db
 |   +-- db.go
 +-- handlers
+|   +-- config.go
 |   +-- logs.go
 |   +-- response.go
 |   +-- verifyJWT.go
@@ -103,6 +109,10 @@ The application uses [winston](https://github.com/winstonjs/winston) as the defa
 |   +-- models.go
 +-- validators
 |   +-- validators.go
++-- tests
+|   +-- api_test.go
++-- routes
+|   +-- routes.go
 +-- uploaded
 +-- vendor
 +-- nginx
@@ -116,7 +126,5 @@ The application uses [winston](https://github.com/winstonjs/winston) as the defa
 +-- go.mod
 +-- go.sum
 +-- main.go
-+-- routes.go
-+-- api_test.go
 +-- README.md
 ```

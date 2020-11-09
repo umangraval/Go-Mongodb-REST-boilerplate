@@ -6,6 +6,8 @@
 *.dylib
 main
 
+.env
+
 # exclude everything
 uploaded/*
 

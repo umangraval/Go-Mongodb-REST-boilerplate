@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/fatih/color"
-	"github.com/joho/godotenv"
 	"github.com/rs/cors"
 	middlewares "github.com/umangraval/Go-Mongodb-REST-boilerplate/handlers"
+	"github.com/umangraval/Go-Mongodb-REST-boilerplate/routes"
 )
 
 func hello(w http.ResponseWriter, req *http.Request) {
@@ -17,15 +16,11 @@ func hello(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	port := os.Getenv("PORT")
+	port := middlewares.DotEnvVariable("PORT")
 	color.Cyan("🌏 Server running on localhost:" + port)
 
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
-	router := Routes()
+	router := routes.Routes()
 	c := cors.New(cors.Options{
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders: []string{"Content-Type", "Origin", "Accept", "*"},
